@@ -25,12 +25,6 @@ def login_action(request):
         else:
             return render(request,'index.html',{'error':'username or passowrd error!'})
 
-#登录成功页
-@login_required
-def event_manage(request):
-    username = request.session.get('user','')
-    return render(request,'event_manage.html',{'user':username})
-
 #发布会管理
 @login_required
 def event_manage(request):
