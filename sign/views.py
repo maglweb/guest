@@ -1,9 +1,11 @@
 #-*-coding:UTF-8 -*-
-from django.shortcuts import render
+from django.shortcuts import render,get_object_or_404
 from django.http import HttpResponse,HttpResponseRedirect
 from django.contrib import auth
 from django.contrib.auth.decorators import login_required
 from sign.models import Event,Guest
+from django.core.paginator import Paginator,EmptyPage,PageNotAnInteger
+from django.conf.urls import include,url
 
 # Create your views here.
 
@@ -32,6 +34,7 @@ def event_manage(request):
     username = request.session.get('user','')
     return render(request,'event_manage.html',{'user':username,'events':event_list})
 
+# 发布会名称搜索
 @login_required
 def search_name(request):
     username = request.session.get('user','')
@@ -39,5 +42,36 @@ def search_name(request):
     event_list = Event.objects.filter(name__contains=search_name) #
     return render(request,'event_manage.html',{'user':username,'events':event_list})
 
+#嘉宾管理
 @login_required
-def logout(request):
+def guest_manage(request):
+    username = request.session.get('user','')
+    guest_list = Guest.objects.all()
+    paginator = Paginator(guest_list,2)
+    page = request.GET.get('page')
+    try:
+        contacts = paginator.page(page)
+    except PageNotAnInteger:
+        #如果page不是整数，取第一个页面数据
+        contacts = paginator.page(1)
+    except EmptyPage:
+        #如果Page不在范围，取最后一页
+        contacts = paginator.page(paginator.num_pages)
+    return render(request,'guest_manage.html',{'user':username,'guests':contacts})
+
+# 嘉宾手机号的查询
+@login_required
+def search_phone(request):
+    username = request.session.get('user','')
+    search_phone = request.GET.get('phone','')
+    guest_list = Guest.objects.filter(phone__contains = search_phone)
+    return render(request,'guest_manage.html',{'user':username,'guests':guest_list})
+
+#签到页面
+@login_required
+def sign_index(request,eid):
+    event = get_object_or_404(Event,id=eid)
+    return render(request,'sign_index.html',{'event':event})
+
+# @login_required
+# def logout(request):

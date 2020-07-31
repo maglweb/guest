@@ -16,6 +16,7 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path
 from sign import views
+from django.conf.urls import include,url
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -23,5 +24,9 @@ urlpatterns = [
     path('login_action/',views.login_action),
     path('event_manage/',views.event_manage),
     path('accounts/login/',views.index),
-    path('search_name/',views.search_name)
+    path('search_name/',views.search_name),
+    path('guest_manage/',views.guest_manage),
+    path('search_phone/',views.search_phone),
+    #path(r'^sign_index/(?P<eid>[0-9]+)/$',views.sign_index),
+    url(r'^sign_index/(?P<eid>[0-9]+)/$', views.sign_index),
 ]
