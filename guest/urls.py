@@ -29,4 +29,6 @@ urlpatterns = [
     path('search_phone/',views.search_phone),
     #path(r'^sign_index/(?P<eid>[0-9]+)/$',views.sign_index),
     url(r'^sign_index/(?P<eid>[0-9]+)/$', views.sign_index),
+    url(r'^sign_index_action/(?P<eid>[0-9]+)/$', views.sign_index_action),
+    path('logout/',views.logout),
 ]
