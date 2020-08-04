@@ -47,6 +47,10 @@ class EventManageTest(TestCase):
 
     def test_event_manage_success(self):
         '''测试发布会:xiaomi5'''
+        response = self.client.post('/login_action/',data=self.login_user)
+        response = self.client.post('event_manage/')
+        self.assertEqual(response.status_code,200)
+        self.assertIn('xiaomi5',response.content)
 
     def test_event_manage_search_success(self):
         '''测试发布会搜索'''
