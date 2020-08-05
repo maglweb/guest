@@ -32,6 +32,7 @@ class GetEventListTest(unittest.TestCase):
     def test_get_event_success(self):
         r = requests.get(self.url,params={'eid':'1'})
         result = r.json()
+        print(result)
         self.assertEqual(result['status'],200)
 
 
