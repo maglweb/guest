@@ -10,7 +10,7 @@ from django.http import JsonResponse
 from sign.models import Event, Guest
 from django.core.exceptions import ValidationError, ObjectDoesNotExist
 from django.db.utils import IntegrityError
-import time
+import time,hashlib
 
 #用户认证
 def user_auth(request):
@@ -36,7 +36,7 @@ def get_event_list(request):
         return  JsonResponse({'status':10011,'message':'user auth null'})
     if auth_result == 'fail':
         return  JsonResponse({'status':10012,'message':'user auth fail'})
-    eid = request.Get.get('eid','') #发布会id
+    eid = request.GET.get('eid','') #发布会id
     name = request.GET.get('name', '') #发布会名称
 
     if eid == '' and name == '':
@@ -73,3 +73,46 @@ def get_event_list(request):
             return JsonResponse({'status':200, 'message':'success', 'data':datas})
         else:
             return JsonResponse({'status':10022, 'message':'query result is empty'})
+
+
+
+#用户签名+时间戳
+def user_sign(request):
+    if request.method == 'POST':
+        client_time = request.POST.get('time','') #客户端时间戳
+        client_sign = request.POST.get('sign','')#客户端签名
+    else:
+        return 'error'
+    if client_time == '' or client_sign == '':
+        return 'sign null'
+
+    #服务器时间
+    now_time = time.time() #时间戳格式
+    print(now_time)
+    server_time = str(now_time).split('.')[0]
+    print(server_time)
+
+    #获取时间差
+    time_difference = int(server_time) - int(client_time)
+    if time_difference >= 60:
+        return 'timeout'
+
+    #签名检查
+    md5 = hashlib.md5()
+    sign_str = client_time + "&Guest-Bugmaster"
+    sign_bytes_utf8 = sign_str.encode(encoding='utf-8')
+    md5.update(sign_bytes_utf8)
+    server_sign = md5.hexdigest()
+
+    if server_sign != client_sign:
+        return 'sign fail'
+    else:
+        return 'sign right'
+
+
+#添加发布会接口---增加签名+时间戳
+def add_event(request):
+    sign_result =  user_sign(request)
+    if sign_result == 'error':
+        return JsonResponse()
+

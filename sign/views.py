@@ -39,7 +39,7 @@ def event_manage(request):
 
 
 # 发布会名称搜索
-@login_required
+#@login_required
 def search_name(request):
     username = request.session.get('user', '')
     search_name = request.GET.get('name', '')
@@ -66,7 +66,7 @@ def guest_manage(request):
 
 
 # 嘉宾手机号的查询
-@login_required
+#@login_required
 def search_phone(request):
     username = request.session.get('user', '')
     search_phone = request.GET.get('phone', '')
